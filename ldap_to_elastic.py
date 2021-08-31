@@ -2,7 +2,7 @@
 
 import ldap,requests,json,os
 
-DEBUG = "1"
+DEBUG = True
 
 ldapDomain = os.environ['L2E_LDAP_DOMAIN']
 ldapBindDN = os.environ['L2E_LDAP_LOGIN']
