@@ -9,9 +9,12 @@ ldapBindDN = os.environ['L2E_LDAP_LOGIN']
 ldapPassword = os.environ['L2E_LDAP_PASS']
 ldapBaseDN = os.environ['L2E_LDAP_BASE_DN']
 ldapFilter = os.environ['L2E_LDAP_FILTER']
+ldapGroupsListKey = os.environ['L2E_LDAP_GROUPS_LIST_KEY']
 
 elasticLogin = os.environ['L2E_ELASTIC_LOGIN']
 elasticPassword = os.environ['L2E_ELASTIC_PASS']
+
+ldapGroups = ['CI', 'DevOps']
 
 def getLdapUsers():
   CACERTFILE="ca.crt"
@@ -23,11 +26,18 @@ def getLdapUsers():
   l.set_option(ldap.OPT_X_TLS_CACERTFILE,CACERTFILE)
 
   l.simple_bind_s(ldapBindDN,ldapPassword)
-  ldapResponse = l.search_s(ldapBaseDN, ldap.SCOPE_SUBTREE, ldapFilter)
+  ldapResponse = l.search_s(ldapBaseDN, ldap.SCOPE_SUBTREE, ldapFilter, ['*', ldapGroupsListKey])
+
 
   ldapUsers = []
   for user in ldapResponse:
-    ldapUsers.append(user[1]["cn"][0].decode("utf-8"))
+
+    if ldapGroupsListKey in user[1].keys():
+      for userGroup in user[1][ldapGroupsListKey]:
+
+        if shrinkLdapGroup(userGroup.decode("utf-8")) in ldapGroups:
+          ldapUsers.append(user[1]["cn"][0].decode("utf-8"))
+          break
 
   ldapUsers.sort()
 
@@ -37,6 +47,10 @@ def getLdapUsers():
       print(ldapUser)
 
   return ldapUsers
+
+
+def shrinkLdapGroup(ldapGroup):
+  return ldapGroup.split(',')[0].split('=')[1]
 
 
 def getElasticUsers():
