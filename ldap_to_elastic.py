@@ -26,8 +26,8 @@ def getLdapUsers():
   ldapResponse = l.search_s(ldapBaseDN, ldap.SCOPE_SUBTREE, ldapFilter)
 
   ldapUsers = []
-  for u in ldapResponse:
-    ldapUsers.append(u[1]["cn"][0].decode("utf-8"))
+  for user in ldapResponse:
+    ldapUsers.append(user[1]["cn"][0].decode("utf-8"))
 
   ldapUsers.sort()
 
