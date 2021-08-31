@@ -15,6 +15,7 @@ ldapPassword        = setEnv("L2E_LDAP_PASS",              default="Not@SecureP@
 ldapBaseDN          = setEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
 ldapFilter          = setEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
 ldapGroupsListKey   = setEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
+ldapCAFilePath      = setEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
 
 elasticLogin        = setEnv("L2E_ELASTIC_LOGIN",          default="elastic")
 elasticPassword     = setEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
@@ -23,11 +24,10 @@ ldapGroups = ["CI", "DevOps"]
 
 
 def getLdapUsers():
-  CACERTFILE="ca.crt"
   ldapURL = "ldaps://" + ldapDomain + ":636"
   l = ldap.initialize(ldapURL)
 
-  l.set_option(ldap.OPT_X_TLS_CACERTFILE,CACERTFILE)
+  l.set_option(ldap.OPT_X_TLS_CACERTFILE,ldapCAFilePath)
 
   l.simple_bind_s(ldapBindDN,ldapPassword)
   ldapResponse = l.search_s(ldapBaseDN, ldap.SCOPE_SUBTREE, ldapFilter, ['*', ldapGroupsListKey])
