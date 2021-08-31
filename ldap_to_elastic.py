@@ -4,23 +4,27 @@ import ldap,requests,json,os
 
 DEBUG = True
 
-ldapDomain = os.environ['L2E_LDAP_DOMAIN']
-ldapBindDN = os.environ['L2E_LDAP_LOGIN']
-ldapPassword = os.environ['L2E_LDAP_PASS']
-ldapBaseDN = os.environ['L2E_LDAP_BASE_DN']
-ldapFilter = os.environ['L2E_LDAP_FILTER']
-ldapGroupsListKey = os.environ['L2E_LDAP_GROUPS_LIST_KEY']
+def setEnv(var, default=""):
+  if var in os.environ:
+    return os.environ[var]
+  return default
 
-elasticLogin = os.environ['L2E_ELASTIC_LOGIN']
-elasticPassword = os.environ['L2E_ELASTIC_PASS']
+ldapDomain          = setEnv("L2E_LDAP_DOMAIN",            default="localhost")
+ldapBindDN          = setEnv("L2E_LDAP_LOGIN",             default="cn=admin,dc=example,dc=org")
+ldapPassword        = setEnv("L2E_LDAP_PASS",              default="Not@SecureP@ssw0rd")
+ldapBaseDN          = setEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
+ldapFilter          = setEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
+ldapGroupsListKey   = setEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
 
-ldapGroups = ['CI', 'DevOps']
+elasticLogin        = setEnv("L2E_ELASTIC_LOGIN",          default="elastic")
+elasticPassword     = setEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
+
+ldapGroups = ["CI", "DevOps"]
+
 
 def getLdapUsers():
   CACERTFILE="ca.crt"
-
   ldapURL = "ldaps://" + ldapDomain + ":636"
-
   l = ldap.initialize(ldapURL)
 
   l.set_option(ldap.OPT_X_TLS_CACERTFILE,CACERTFILE)
@@ -28,8 +32,8 @@ def getLdapUsers():
   l.simple_bind_s(ldapBindDN,ldapPassword)
   ldapResponse = l.search_s(ldapBaseDN, ldap.SCOPE_SUBTREE, ldapFilter, ['*', ldapGroupsListKey])
 
-
   ldapUsers = []
+
   for user in ldapResponse:
 
     if ldapGroupsListKey in user[1].keys():
@@ -72,7 +76,6 @@ def getElasticUsers():
     for elasticUser in elasticUsers:
       print(elasticUser)
 
-
   return elasticUsers
 
 
@@ -82,7 +85,6 @@ def createElasticUser(username):
   url = 'https://localhost:9200/_security/user/' + username
   payload= {"password": "123123", "roles": ["superuser", "kibana_admin"]}
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-
 
   from urllib3.exceptions import InsecureRequestWarning
   requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
