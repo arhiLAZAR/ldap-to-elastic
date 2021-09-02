@@ -2,8 +2,6 @@
 
 import ldap,requests,json,os,re,random,string
 
-DEBUG = True
-
 # Get the value from an environment variable, if exists or use default
 def getEnv(var, default=""):
   if var in os.environ:
@@ -25,6 +23,9 @@ def getEnvList(var, default = []):
     return finalList
 
   return default
+
+trueList            = [True, "true", "True", "TRUE", "yes", "Yes", "YES", "1", 1]
+DEBUG               = getEnv("L2E_DEBUG",                  default="False")
 
 ldapDomain          = getEnv("L2E_LDAP_DOMAIN",            default="localhost")
 ldapPort            = getEnv("L2E_LDAP_PORT",              default="389")
@@ -69,7 +70,7 @@ def getLdapUsers():
 
   ldapUsers.sort()
 
-  if DEBUG:
+  if DEBUG in trueList:
     print("Found following users in LDAP:")
     for ldapUser in ldapUsers:
       print(ldapUser)
@@ -85,7 +86,7 @@ def getElasticUsers():
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-  if elasticInsecureTLS in ["true", "True", "TRUE", "yes", "Yes", "YES"]:
+  if elasticInsecureTLS in trueList:
     from urllib3.exceptions import InsecureRequestWarning
     requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
     verifyTLS = False
@@ -99,7 +100,7 @@ def getElasticUsers():
 
   elasticUsers.sort()
 
-  if DEBUG:
+  if DEBUG in trueList:
     print("\nFound following users in elasticsearch:")
     for elasticUser in elasticUsers:
       print(elasticUser)
@@ -117,7 +118,7 @@ def createElasticUser(username):
   payload = {"password": randomPassword, "roles": elasticRoles}
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-  if elasticInsecureTLS in ["true", "True", "TRUE", "yes", "Yes", "YES"]:
+  if elasticInsecureTLS in trueList:
     from urllib3.exceptions import InsecureRequestWarning
     requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
     verifyTLS = False
