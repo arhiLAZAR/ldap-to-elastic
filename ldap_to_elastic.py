@@ -43,6 +43,7 @@ elasticPort         = getEnv("L2E_ELASTIC_PORT",           default="9200")
 elasticSchema       = getEnv("L2E_ELASTIC_SCHEMA",         default="http")
 elasticLogin        = getEnv("L2E_ELASTIC_LOGIN",          default="elastic")
 elasticPassword     = getEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
+elasticInsecureTLS  = getEnv("L2E_ELASTIC_INSECURE_TLS",   default="False")
 
 
 def getLdapUsers():
@@ -83,11 +84,15 @@ def getElasticUsers():
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-  from urllib3.exceptions import InsecureRequestWarning
-  requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+  if elasticInsecureTLS in ["true", "True", "TRUE", "yes", "Yes", "YES"]:
+    from urllib3.exceptions import InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    verifyTLS = False
+  else:
+    verifyTLS = True
 
   elasticUsers = []
-  elasticResponse = requests.get(url, headers=headers, auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword), verify=False)
+  elasticResponse = requests.get(elasticURL, headers=headers, auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword), verify=verifyTLS)
   for user, params in elasticResponse.json().items():
     elasticUsers.append(params['username'])
 
@@ -108,10 +113,14 @@ def createElasticUser(username):
   payload= {"password": "123123", "roles": ["superuser", "kibana_admin"]}
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-  from urllib3.exceptions import InsecureRequestWarning
-  requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+  if elasticInsecureTLS in ["true", "True", "TRUE", "yes", "Yes", "YES"]:
+    from urllib3.exceptions import InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    verifyTLS = False
+  else:
+    verifyTLS = True
 
-  elasticResponse = requests.post(url, json=payload, headers=headers, auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword), verify=False)
+  elasticResponse = requests.post(elasticURL, json=payload, headers=headers, auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword), verify=verifyTLS)
 
   print("Done!")
 
