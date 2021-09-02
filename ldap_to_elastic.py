@@ -4,7 +4,8 @@ import ldap,requests,json,os,re
 
 DEBUG = True
 
-def setEnv(var, default=""):
+# Get the value from an environment variable, if exists or use default
+def getEnv(var, default=""):
   if var in os.environ:
     return os.environ[var]
   return default
@@ -25,19 +26,17 @@ def getEnvList(var, default = []):
 
   return default
 
-ldapDomain          = setEnv("L2E_LDAP_DOMAIN",            default="localhost")
-ldapBindDN          = setEnv("L2E_LDAP_LOGIN",             default="cn=admin,dc=example,dc=org")
-ldapPassword        = setEnv("L2E_LDAP_PASS",              default="Not@SecureP@ssw0rd")
-ldapBaseDN          = setEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
-ldapFilter          = setEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
+ldapDomain          = getEnv("L2E_LDAP_DOMAIN",            default="localhost")
+ldapBindDN          = getEnv("L2E_LDAP_LOGIN",             default="cn=admin,dc=example,dc=org")
+ldapPassword        = getEnv("L2E_LDAP_PASS",              default="Not@SecureP@ssw0rd")
+ldapBaseDN          = getEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
+ldapFilter          = getEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
 ldapGroups          = getEnvList("L2E_LDAP_GROUPS",        default=[])
-ldapGroupsListKey   = setEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
-ldapCAFilePath      = setEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
+ldapGroupsListKey   = getEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
+ldapCAFilePath      = getEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
 
-elasticLogin        = setEnv("L2E_ELASTIC_LOGIN",          default="elastic")
-elasticPassword     = setEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
-
-ldapGroups = ["CI", "DevOps"]
+elasticLogin        = getEnv("L2E_ELASTIC_LOGIN",          default="elastic")
+elasticPassword     = getEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
 
 
 def getLdapUsers():
