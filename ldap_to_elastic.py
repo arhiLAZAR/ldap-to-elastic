@@ -38,6 +38,9 @@ ldapGroupsListKey   = getEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
 ldapKeyForUsername  = getEnv("L2E_LDAP_KEY_FOR_USERNAME",  default="cn")
 ldapCAFilePath      = getEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
 
+elasticDomain       = getEnv("L2E_ELASTIC_DOMAIN",         default="localhost")
+elasticPort         = getEnv("L2E_ELASTIC_PORT",           default="9200")
+elasticSchema       = getEnv("L2E_ELASTIC_SCHEMA",         default="http")
 elasticLogin        = getEnv("L2E_ELASTIC_LOGIN",          default="elastic")
 elasticPassword     = getEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
 
@@ -77,7 +80,7 @@ def shrinkLdapGroup(ldapGroup):
 
 
 def getElasticUsers():
-  url = 'https://localhost:9200/_security/user'
+  elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
   from urllib3.exceptions import InsecureRequestWarning
@@ -101,7 +104,7 @@ def getElasticUsers():
 def createElasticUser(username):
   print("Create new elasticsearch user " + username, end='\t\t')
 
-  url = 'https://localhost:9200/_security/user/' + username
+  elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user/" + + username
   payload= {"password": "123123", "roles": ["superuser", "kibana_admin"]}
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
