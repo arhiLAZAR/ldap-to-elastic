@@ -35,6 +35,7 @@ ldapBaseDN          = getEnv("L2E_LDAP_BASE_DN",           default="dc=example,d
 ldapFilter          = getEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
 ldapGroups          = getEnvList("L2E_LDAP_GROUPS",        default=[]) # Example: export L2E_LDAP_GROUPS='"CI" "DevOps"'
 ldapGroupsListKey   = getEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
+ldapKeyForUsername  = getEnv("L2E_LDAP_KEY_FOR_USERNAME",  default="cn")
 ldapCAFilePath      = getEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
 
 elasticLogin        = getEnv("L2E_ELASTIC_LOGIN",          default="elastic")
@@ -58,7 +59,7 @@ def getLdapUsers():
       for userGroup in user[1][ldapGroupsListKey]:
 
         if shrinkLdapGroup(userGroup.decode("utf-8")) in ldapGroups:
-          ldapUsers.append(user[1]["cn"][0].decode("utf-8"))
+          ldapUsers.append(user[1][ldapKeyForUsername][0].decode("utf-8"))
           break
 
   ldapUsers.sort()
