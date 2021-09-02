@@ -33,7 +33,7 @@ ldapBindDN          = getEnv("L2E_LDAP_LOGIN",             default="cn=admin,dc=
 ldapPassword        = getEnv("L2E_LDAP_PASS",              default="Not@SecureP@ssw0rd")
 ldapBaseDN          = getEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
 ldapFilter          = getEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
-ldapGroups          = getEnvList("L2E_LDAP_GROUPS",        default=[])
+ldapGroups          = getEnvList("L2E_LDAP_GROUPS",        default=[]) # Example: export L2E_LDAP_GROUPS='"CI" "DevOps"'
 ldapGroupsListKey   = getEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
 ldapCAFilePath      = getEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
 
