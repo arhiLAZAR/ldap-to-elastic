@@ -42,7 +42,7 @@ elasticPassword     = getEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@
 
 
 def getLdapUsers():
-  ldapURL = ldapSchema + "://" + ldapDomain + ":" + ldapPort ##########################
+  ldapURL = ldapSchema + "://" + ldapDomain + ":" + ldapPort
   l = ldap.initialize(ldapURL)
 
   l.set_option(ldap.OPT_X_TLS_CACERTFILE,ldapCAFilePath)
