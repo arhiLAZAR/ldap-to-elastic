@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import ldap,requests,json,os
+import ldap,requests,json,os,re
 
 DEBUG = True
 
@@ -9,11 +9,28 @@ def setEnv(var, default=""):
     return os.environ[var]
   return default
 
+
+# Get the value from an environment variable and convert it to a list.
+# Elements must be enclosed in qoutes.
+# Use default if the variable doesn't exist
+def getEnvList(var, default = []):
+  if var in os.environ:
+    rawList = os.environ[var].split('"')
+    finalList = []
+
+    for value in rawList:
+      if not re.search(r'^ *$', value):
+        finalList.append(value)
+    return finalList
+
+  return default
+
 ldapDomain          = setEnv("L2E_LDAP_DOMAIN",            default="localhost")
 ldapBindDN          = setEnv("L2E_LDAP_LOGIN",             default="cn=admin,dc=example,dc=org")
 ldapPassword        = setEnv("L2E_LDAP_PASS",              default="Not@SecureP@ssw0rd")
 ldapBaseDN          = setEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
 ldapFilter          = setEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
+ldapGroups          = getEnvList("L2E_LDAP_GROUPS",        default=[])
 ldapGroupsListKey   = setEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
 ldapCAFilePath      = setEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
 
