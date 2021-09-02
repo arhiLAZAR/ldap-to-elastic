@@ -82,19 +82,25 @@ def shrinkLdapGroup(ldapGroup):
   return ldapGroup.split(',')[0].split('=')[1]
 
 
+def verifyElasticTLS():
+  if elasticInsecureTLS in trueList:
+    from urllib3.exceptions import InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    return False
+  return True
+
+
 def getElasticUsers():
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-  if elasticInsecureTLS in trueList:
-    from urllib3.exceptions import InsecureRequestWarning
-    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
-    verifyTLS = False
-  else:
-    verifyTLS = True
-
   elasticUsers = []
-  elasticResponse = requests.get(elasticURL, headers=headers, auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword), verify=verifyTLS)
+  elasticResponse = requests.get(elasticURL,
+                                 headers=headers,
+                                 auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword),
+                                 verify=verifyElasticTLS()
+                                 )
+
   for user, params in elasticResponse.json().items():
     elasticUsers.append(params['username'])
 
@@ -118,14 +124,12 @@ def createElasticUser(username):
   payload = {"password": randomPassword, "roles": elasticRoles}
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-  if elasticInsecureTLS in trueList:
-    from urllib3.exceptions import InsecureRequestWarning
-    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
-    verifyTLS = False
-  else:
-    verifyTLS = True
-
-  elasticResponse = requests.post(elasticURL, json=payload, headers=headers, auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword), verify=verifyTLS)
+  elasticResponse = requests.post(elasticURL,
+                                  json=payload,
+                                  headers=headers,
+                                  auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword),
+                                  verify=verifyElasticTLS()
+                                  )
 
   print("Done!")
 
