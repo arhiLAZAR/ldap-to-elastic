@@ -27,6 +27,8 @@ def getEnvList(var, default = []):
   return default
 
 ldapDomain          = getEnv("L2E_LDAP_DOMAIN",            default="localhost")
+ldapPort            = getEnv("L2E_LDAP_PORT",              default="389")
+ldapSchema          = getEnv("L2E_LDAP_SCHEMA",            default="ldap")
 ldapBindDN          = getEnv("L2E_LDAP_LOGIN",             default="cn=admin,dc=example,dc=org")
 ldapPassword        = getEnv("L2E_LDAP_PASS",              default="Not@SecureP@ssw0rd")
 ldapBaseDN          = getEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
@@ -40,7 +42,7 @@ elasticPassword     = getEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@
 
 
 def getLdapUsers():
-  ldapURL = "ldaps://" + ldapDomain + ":636"
+  ldapURL = ldapSchema + "://" + ldapDomain + ":" + ldapPort ##########################
   l = ldap.initialize(ldapURL)
 
   l.set_option(ldap.OPT_X_TLS_CACERTFILE,ldapCAFilePath)
