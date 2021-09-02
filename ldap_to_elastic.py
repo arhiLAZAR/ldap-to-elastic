@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import ldap,requests,json,os,re
+import ldap,requests,json,os,re,random,string
 
 DEBUG = True
 
@@ -43,6 +43,7 @@ elasticPort         = getEnv("L2E_ELASTIC_PORT",           default="9200")
 elasticSchema       = getEnv("L2E_ELASTIC_SCHEMA",         default="http")
 elasticLogin        = getEnv("L2E_ELASTIC_LOGIN",          default="elastic")
 elasticPassword     = getEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
+elasticRoles        = getEnvList("L2E_ELASTIC_ROLES",      default=["kibana_admin"])
 elasticInsecureTLS  = getEnv("L2E_ELASTIC_INSECURE_TLS",   default="False")
 
 
@@ -109,8 +110,11 @@ def getElasticUsers():
 def createElasticUser(username):
   print("Create new elasticsearch user " + username, end='\t\t')
 
-  elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user/" + + username
-  payload= {"password": "123123", "roles": ["superuser", "kibana_admin"]}
+  elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user/" + username
+
+  randomPassword = "".join(random.choice(string.ascii_letters + string.digits) for i in range(16))
+
+  payload = {"password": randomPassword, "roles": elasticRoles}
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
   if elasticInsecureTLS in ["true", "True", "TRUE", "yes", "Yes", "YES"]:
