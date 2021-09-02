@@ -64,7 +64,7 @@ def getLdapUsers():
     if ldapGroupsListKey in user[1].keys():
       for userGroup in user[1][ldapGroupsListKey]:
 
-        if shrinkLdapGroup(userGroup.decode("utf-8")) in ldapGroups:
+        if shrinkLdapGroup(userGroup.decode("utf-8")) in ldapGroups or ldapGroups == []:
           ldapUsers.append(user[1][ldapKeyForUsername][0].decode("utf-8"))
           break
 
