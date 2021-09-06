@@ -162,4 +162,9 @@ def main():
     if ldapUser not in elasticUsers:
       createElasticUser(ldapUser)
 
+  for elasticUser, elasticRoles in elasticUsers.items():
+    if elasticUser not in ldapUsers and elasticRoleForImportedUsers in elasticRoles:
+      deleteElasticUser(elasticUser)
+
+
 main()
