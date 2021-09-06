@@ -45,7 +45,7 @@ elasticSchema                = getEnv("L2E_ELASTIC_SCHEMA",                    d
 elasticLogin                 = getEnv("L2E_ELASTIC_LOGIN",                     default="elastic")
 elasticPassword              = getEnv("L2E_ELASTIC_PASS",                      default="Not@SecureP@ssw0rd")
 elasticRoles                 = getEnvList("L2E_ELASTIC_ROLES",                 default=["kibana_admin"])
-elasticRoleForImportedUsers  = getEnv("L2E_ELASTIC_ROLE_FOR_IMPORTED_USERS",   default="kibana_admin")
+elasticRoleForImportedUsers  = getEnv("L2E_ELASTIC_ROLE_FOR_IMPORTED_USERS",   default="imported_from_ldap")
 elasticInsecureTLS           = getEnv("L2E_ELASTIC_INSECURE_TLS",              default="False")
 
 
