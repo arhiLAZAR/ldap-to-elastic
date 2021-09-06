@@ -130,7 +130,10 @@ def createElasticUser(username):
                                   verify=verifyElasticTLS()
                                   )
 
-  print("Done!")
+  if elasticResponse.json()['created']:
+    print("Done!")
+  else:
+    print("Error!\n", elasticResponse.text)
 
 
 def deleteElasticUser(username):
