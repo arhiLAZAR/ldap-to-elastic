@@ -24,7 +24,9 @@ def getEnvList(var, default = []):
 
   return default
 
+# A list of "true" values for comparing imported from bash variables with
 trueList                     = [True, "true", "True", "TRUE", "yes", "Yes", "YES", "1", 1]
+
 DEBUG                        = getEnv("L2E_DEBUG",                             default="False")
 
 ldapDomain                   = getEnv("L2E_LDAP_DOMAIN",                       default="localhost")
@@ -34,8 +36,16 @@ ldapBindDN                   = getEnv("L2E_LDAP_LOGIN",                        d
 ldapPassword                 = getEnv("L2E_LDAP_PASS",                         default="Not@SecureP@ssw0rd")
 ldapBaseDN                   = getEnv("L2E_LDAP_BASE_DN",                      default="dc=example,dc=org")
 ldapFilter                   = getEnv("L2E_LDAP_FILTER",                       default="objectclass=inetOrgPerson")
-ldapGroups                   = getEnvList("L2E_LDAP_GROUPS",                   default=[]) # Example: export L2E_LDAP_GROUPS='"CI" "DevOps"'
+
+# A list of LDAP groups from which pick the users. Pick all users if empty
+# Bash example:
+# export L2E_LDAP_GROUPS='"CI" "DevOps"'
+ldapGroups                   = getEnvList("L2E_LDAP_GROUPS",                   default=[])
+
+# An LDAP attribute which contains a list with groups. Can be created with an LDAP memberOf overlay
 ldapGroupsListKey            = getEnv("L2E_LDAP_GROUPS_LIST_KEY",              default="memberOf")
+
+# Which LDAP attribute to use as username for elastic users
 ldapKeyForUsername           = getEnv("L2E_LDAP_KEY_FOR_USERNAME",             default="cn")
 ldapCAFilePath               = getEnv("L2E_LDAP_CA_FILE_PATH",                 default="ca.crt")
 
@@ -44,11 +54,16 @@ elasticPort                  = getEnv("L2E_ELASTIC_PORT",                      d
 elasticSchema                = getEnv("L2E_ELASTIC_SCHEMA",                    default="http")
 elasticLogin                 = getEnv("L2E_ELASTIC_LOGIN",                     default="elastic")
 elasticPassword              = getEnv("L2E_ELASTIC_PASS",                      default="Not@SecureP@ssw0rd")
+
+# Which roles to add to new elastic users. Roles must exist
 elasticRoles                 = getEnvList("L2E_ELASTIC_ROLES",                 default=["kibana_admin"])
+
+# An additional empty role to mark that a user was created by this script
 elasticRoleForImportedUsers  = getEnv("L2E_ELASTIC_ROLE_FOR_IMPORTED_USERS",   default="imported_from_ldap")
 elasticInsecureTLS           = getEnv("L2E_ELASTIC_INSECURE_TLS",              default="False")
 
 
+# Search through LDAP and create a list of users from L2E_LDAP_GROUPS
 def getLdapUsers():
   ldapURL = ldapSchema + "://" + ldapDomain + ":" + ldapPort
   l = ldap.initialize(ldapURL)
@@ -79,10 +94,12 @@ def getLdapUsers():
   return ldapUsers
 
 
+# Transform something like cn=DevOps,ou=groups,dc=example,dc=org to just DevOps
 def shrinkLdapGroup(ldapGroup):
   return ldapGroup.split(',')[0].split('=')[1]
 
 
+# Drop an InsecureRequestWarning
 def verifyElasticTLS():
   if elasticInsecureTLS in trueList:
     from urllib3.exceptions import InsecureRequestWarning
@@ -91,6 +108,7 @@ def verifyElasticTLS():
   return True
 
 
+# Search through Elasticsearch and create a list of roles
 def getElasticRoles():
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/role"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -113,6 +131,7 @@ def getElasticRoles():
   return elasticRoles
 
 
+# Create a new role in Elasticsearch
 def createElasticRole(role):
   print("Creating a new elasticsearch role: " + role, end='\t\t')
 
@@ -134,6 +153,7 @@ def createElasticRole(role):
     print("Error!\n", elasticResponse.text)
 
 
+# Search through Elasticsearch and create a dict of users and their roles
 def getElasticUsers():
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -156,6 +176,7 @@ def getElasticUsers():
   return elasticUsers
 
 
+# Create a new user in Elasticsearch
 def createElasticUser(username):
   print("Creating a new elasticsearch user: " + username, end='\t\t')
 
@@ -182,6 +203,7 @@ def createElasticUser(username):
     print("Error!\n", elasticResponse.text)
 
 
+# Delete an user in Elasticsearch
 def deleteElasticUser(username):
   print("Deleting an elasticsearch user: " + username, end='\t\t')
 
@@ -196,6 +218,7 @@ def deleteElasticUser(username):
     print("Done!")
   else:
     print("Error!\n", elasticResponse.text)
+
 
 def main():
   ldapUsers = getLdapUsers()
