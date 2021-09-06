@@ -47,7 +47,7 @@ ldapGroupsListKey            = getEnv("L2E_LDAP_GROUPS_LIST_KEY",              d
 
 # Which LDAP attribute to use as username for elastic users
 ldapKeyForUsername           = getEnv("L2E_LDAP_KEY_FOR_USERNAME",             default="cn")
-ldapCAFilePath               = getEnv("L2E_LDAP_CA_FILE_PATH",                 default="ca.crt")
+ldapCAFilePath               = getEnv("L2E_LDAP_CA_FILE_PATH",                 default="")
 
 elasticDomain                = getEnv("L2E_ELASTIC_DOMAIN",                    default="localhost")
 elasticPort                  = getEnv("L2E_ELASTIC_PORT",                      default="9200")
@@ -65,8 +65,10 @@ elasticInsecureTLS           = getEnv("L2E_ELASTIC_INSECURE_TLS",              d
 
 # Search through LDAP and create a list of users from L2E_LDAP_GROUPS
 def getLdapUsers():
+  if ldapCAFilePath:
+      ldap.set_option(ldap.OPT_X_TLS_CACERTFILE,ldapCAFilePath)
+
   ldapURL = ldapSchema + "://" + ldapDomain + ":" + ldapPort
-  ldap.set_option(ldap.OPT_X_TLS_CACERTFILE,ldapCAFilePath)
   l = ldap.initialize(ldapURL)
 
   l.simple_bind_s(ldapBindDN,ldapPassword)
