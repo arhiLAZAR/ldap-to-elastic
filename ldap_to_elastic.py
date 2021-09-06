@@ -133,6 +133,21 @@ def createElasticUser(username):
   print("Done!")
 
 
+def deleteElasticUser(username):
+  print("Deleting an elasticsearch user: " + username, end='\t\t')
+
+  elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user/" + username
+
+  elasticResponse = requests.delete(elasticURL,
+                                  auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword),
+                                  verify=verifyElasticTLS()
+                                  )
+
+  if elasticResponse.json()["found"]:
+    print("Done!")
+  else:
+    print("Error!\n", elasticResponse.text)
+
 def main():
   ldapUsers = getLdapUsers()
   elasticUsers = getElasticUsers()
