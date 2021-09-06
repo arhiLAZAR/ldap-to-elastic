@@ -66,9 +66,8 @@ elasticInsecureTLS           = getEnv("L2E_ELASTIC_INSECURE_TLS",              d
 # Search through LDAP and create a list of users from L2E_LDAP_GROUPS
 def getLdapUsers():
   ldapURL = ldapSchema + "://" + ldapDomain + ":" + ldapPort
+  ldap.set_option(ldap.OPT_X_TLS_CACERTFILE,ldapCAFilePath)
   l = ldap.initialize(ldapURL)
-
-  l.set_option(ldap.OPT_X_TLS_CACERTFILE,ldapCAFilePath)
 
   l.simple_bind_s(ldapBindDN,ldapPassword)
   ldapResponse = l.search_s(ldapBaseDN, ldap.SCOPE_SUBTREE, ldapFilter, ['*', ldapGroupsListKey])
