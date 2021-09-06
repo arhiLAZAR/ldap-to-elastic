@@ -123,6 +123,8 @@ def getElasticRoles():
   for role in elasticResponse.json():
     elasticRoles.append(role)
 
+  elasticRoles.sort()
+
   if DEBUG in trueList:
     print("\nFound following roles in elasticsearch:")
     for role in elasticRoles:
