@@ -95,7 +95,7 @@ def getElasticUsers():
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-  elasticUsers = []
+  elasticUsers = {}
   elasticResponse = requests.get(elasticURL,
                                  headers=headers,
                                  auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword),
@@ -103,14 +103,12 @@ def getElasticUsers():
                                  )
 
   for user, params in elasticResponse.json().items():
-    elasticUsers.append(params['username'])
-
-  elasticUsers.sort()
+    elasticUsers[params['username']] = params['roles']
 
   if DEBUG in trueList:
     print("\nFound following users in elasticsearch:")
-    for elasticUser in elasticUsers:
-      print(elasticUser)
+    for user, roles in elasticUsers.items():
+      print(user, roles)
 
   return elasticUsers
 
