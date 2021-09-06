@@ -114,7 +114,7 @@ def getElasticUsers():
 
 
 def createElasticUser(username):
-  print("Create new elasticsearch user " + username, end='\t\t')
+  print("Creating a new elasticsearch user: " + username, end='\t\t')
 
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user/" + username
 
