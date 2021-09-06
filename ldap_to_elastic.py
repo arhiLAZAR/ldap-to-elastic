@@ -91,6 +91,49 @@ def verifyElasticTLS():
   return True
 
 
+def getElasticRoles():
+  elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/role"
+  headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+
+  elasticRoles = []
+  elasticResponse = requests.get(elasticURL,
+                                 headers=headers,
+                                 auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword),
+                                 verify=verifyElasticTLS()
+                                 )
+
+  for role in elasticResponse.json():
+    elasticRoles.append(role)
+
+  if DEBUG in trueList:
+    print("\nFound following roles in elasticsearch:")
+    for role in elasticRoles:
+      print(role)
+
+  return elasticRoles
+
+
+def createElasticRole(role):
+  print("Creating a new elasticsearch role: " + role, end='\t\t')
+
+  elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/role/" + role
+
+  payload = {}
+  headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+
+  elasticResponse = requests.post(elasticURL,
+                                  json=payload,
+                                  headers=headers,
+                                  auth=requests.auth.HTTPBasicAuth(elasticLogin, elasticPassword),
+                                  verify=verifyElasticTLS()
+                                  )
+
+  if elasticResponse.json()['role']['created']:
+    print("Done!")
+  else:
+    print("Error!\n", elasticResponse.text)
+
+
 def getElasticUsers():
   elasticURL = elasticSchema + "://" + elasticDomain + ":" + elasticPort + "/_security/user"
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -156,7 +199,11 @@ def deleteElasticUser(username):
 
 def main():
   ldapUsers = getLdapUsers()
+  elasticRoles = getElasticRoles()
   elasticUsers = getElasticUsers()
+
+  if elasticRoleForImportedUsers not in elasticRoles:
+    createElasticRole(elasticRoleForImportedUsers)
 
   for ldapUser in ldapUsers:
     if ldapUser not in elasticUsers:
