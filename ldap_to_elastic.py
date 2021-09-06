@@ -24,28 +24,29 @@ def getEnvList(var, default = []):
 
   return default
 
-trueList            = [True, "true", "True", "TRUE", "yes", "Yes", "YES", "1", 1]
-DEBUG               = getEnv("L2E_DEBUG",                  default="False")
+trueList                     = [True, "true", "True", "TRUE", "yes", "Yes", "YES", "1", 1]
+DEBUG                        = getEnv("L2E_DEBUG",                             default="False")
 
-ldapDomain          = getEnv("L2E_LDAP_DOMAIN",            default="localhost")
-ldapPort            = getEnv("L2E_LDAP_PORT",              default="389")
-ldapSchema          = getEnv("L2E_LDAP_SCHEMA",            default="ldap")
-ldapBindDN          = getEnv("L2E_LDAP_LOGIN",             default="cn=admin,dc=example,dc=org")
-ldapPassword        = getEnv("L2E_LDAP_PASS",              default="Not@SecureP@ssw0rd")
-ldapBaseDN          = getEnv("L2E_LDAP_BASE_DN",           default="dc=example,dc=org")
-ldapFilter          = getEnv("L2E_LDAP_FILTER",            default="objectclass=inetOrgPerson")
-ldapGroups          = getEnvList("L2E_LDAP_GROUPS",        default=[]) # Example: export L2E_LDAP_GROUPS='"CI" "DevOps"'
-ldapGroupsListKey   = getEnv("L2E_LDAP_GROUPS_LIST_KEY",   default="memberOf")
-ldapKeyForUsername  = getEnv("L2E_LDAP_KEY_FOR_USERNAME",  default="cn")
-ldapCAFilePath      = getEnv("L2E_LDAP_CA_FILE_PATH",      default="ca.crt")
+ldapDomain                   = getEnv("L2E_LDAP_DOMAIN",                       default="localhost")
+ldapPort                     = getEnv("L2E_LDAP_PORT",                         default="389")
+ldapSchema                   = getEnv("L2E_LDAP_SCHEMA",                       default="ldap")
+ldapBindDN                   = getEnv("L2E_LDAP_LOGIN",                        default="cn=admin,dc=example,dc=org")
+ldapPassword                 = getEnv("L2E_LDAP_PASS",                         default="Not@SecureP@ssw0rd")
+ldapBaseDN                   = getEnv("L2E_LDAP_BASE_DN",                      default="dc=example,dc=org")
+ldapFilter                   = getEnv("L2E_LDAP_FILTER",                       default="objectclass=inetOrgPerson")
+ldapGroups                   = getEnvList("L2E_LDAP_GROUPS",                   default=[]) # Example: export L2E_LDAP_GROUPS='"CI" "DevOps"'
+ldapGroupsListKey            = getEnv("L2E_LDAP_GROUPS_LIST_KEY",              default="memberOf")
+ldapKeyForUsername           = getEnv("L2E_LDAP_KEY_FOR_USERNAME",             default="cn")
+ldapCAFilePath               = getEnv("L2E_LDAP_CA_FILE_PATH",                 default="ca.crt")
 
-elasticDomain       = getEnv("L2E_ELASTIC_DOMAIN",         default="localhost")
-elasticPort         = getEnv("L2E_ELASTIC_PORT",           default="9200")
-elasticSchema       = getEnv("L2E_ELASTIC_SCHEMA",         default="http")
-elasticLogin        = getEnv("L2E_ELASTIC_LOGIN",          default="elastic")
-elasticPassword     = getEnv("L2E_ELASTIC_PASS",           default="Not@SecureP@ssw0rd")
-elasticRoles        = getEnvList("L2E_ELASTIC_ROLES",      default=["kibana_admin"])
-elasticInsecureTLS  = getEnv("L2E_ELASTIC_INSECURE_TLS",   default="False")
+elasticDomain                = getEnv("L2E_ELASTIC_DOMAIN",                    default="localhost")
+elasticPort                  = getEnv("L2E_ELASTIC_PORT",                      default="9200")
+elasticSchema                = getEnv("L2E_ELASTIC_SCHEMA",                    default="http")
+elasticLogin                 = getEnv("L2E_ELASTIC_LOGIN",                     default="elastic")
+elasticPassword              = getEnv("L2E_ELASTIC_PASS",                      default="Not@SecureP@ssw0rd")
+elasticRoles                 = getEnvList("L2E_ELASTIC_ROLES",                 default=["kibana_admin"])
+elasticRoleForImportedUsers  = getEnv("L2E_ELASTIC_ROLE_FOR_IMPORTED_USERS",   default="kibana_admin")
+elasticInsecureTLS           = getEnv("L2E_ELASTIC_INSECURE_TLS",              default="False")
 
 
 def getLdapUsers():
