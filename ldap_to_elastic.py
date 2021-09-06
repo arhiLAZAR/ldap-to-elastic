@@ -120,6 +120,9 @@ def createElasticUser(username):
 
   randomPassword = "".join(random.choice(string.ascii_letters + string.digits) for i in range(16))
 
+  if elasticRoleForImportedUsers not in elasticRoles:
+    elasticRoles.append(elasticRoleForImportedUsers)
+
   payload = {"password": randomPassword, "roles": elasticRoles}
   headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
