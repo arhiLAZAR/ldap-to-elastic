@@ -25,7 +25,7 @@ def getEnvList(var, default = []):
   return default
 
 # A list of "true" values for comparing imported from bash variables with
-trueList                     = [True, "true", "True", "TRUE", "yes", "Yes", "YES", "1", 1]
+trueList                     = [True, "true", "True", "TRUE", "yes", "Yes", "YES", "1", 1, "verbose"]
 
 DEBUG                        = getEnv("L2E_DEBUG",                             default="False")
 
