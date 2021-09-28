@@ -77,13 +77,18 @@ def getLdapUsers():
   ldapUsers = []
 
   for user in ldapResponse:
+    if not isinstance(user[1], dict):
+      if DEBUG in trueList:
+        print("Got some unpredicted response from LDAP:\n", user)
+        if DEBUG == "verbose":
+          print("Full LDAP response:\n", ldapResponse)
+    else:
+      if ldapGroupsListKey in user[1].keys():
+        for userGroup in user[1][ldapGroupsListKey]:
 
-    if ldapGroupsListKey in user[1].keys():
-      for userGroup in user[1][ldapGroupsListKey]:
-
-        if shrinkLdapGroup(userGroup.decode("utf-8")) in ldapGroups or ldapGroups == []:
-          ldapUsers.append(user[1][ldapKeyForUsername][0].decode("utf-8"))
-          break
+          if shrinkLdapGroup(userGroup.decode("utf-8")) in ldapGroups or ldapGroups == []:
+            ldapUsers.append(user[1][ldapKeyForUsername][0].decode("utf-8"))
+            break
 
   ldapUsers.sort()
 
